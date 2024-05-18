@@ -1,4 +1,4 @@
-package org.example;
+package org.easywk.pdfparser;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 
@@ -13,6 +13,11 @@ import java.util.regex.Pattern;
 public class Main {
     static String wettkampf = "";
     static String lauf = "";
+
+    private static String toLeadingZeroString(String value) {
+        return String.format("%02d",Integer.parseInt(value));
+    }
+
     public static void main(String[] args) {
         String filePath = "/Users/nschle85/IdeaProjects/MeldelisteParser/meldeliste.pdf";
         try {
@@ -28,12 +33,23 @@ public class Main {
             List<JTeilnehmerZeile> parsedContent = new ArrayList<>();
             BufferedReader bufReader = new BufferedReader(new StringReader(text));
             String line;
+
+            String laufRegex = "(Lauf) (\\d+)/(\\d+) (.*)";
+            Pattern laufPattern = Pattern.compile(laufRegex);
+
             while( (line=bufReader.readLine()) != null ) {
                 if (line.startsWith("Wettkampf")) {
                     wettkampf = line;
                 }
                 else if (line.startsWith("Lauf")) {
-                    lauf = line;
+                    Matcher laufMatcher = laufPattern.matcher(line);
+                    if(laufMatcher.find()) {
+                      // Lauf 1/2 (ca xyz)
+                      lauf = laufMatcher.group(1)+" "+toLeadingZeroString(laufMatcher.group(2))+"/"+toLeadingZeroString(laufMatcher.group(3))+" "+ laufMatcher.group(4);
+                    }
+                    else {
+                        System.err.println("No matching Lauf:"+ line);
+                    }
                 }
                 else if (line.startsWith("Bahn")){
 

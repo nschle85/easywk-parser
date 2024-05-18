@@ -1,4 +1,4 @@
-package org.example;
+package org.easywk.pdfparser;
 
 public class JTeilnehmerZeile
 {
