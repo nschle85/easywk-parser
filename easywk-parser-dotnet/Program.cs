@@ -1,165 +1,160 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
-using System.Text.RegularExpressions;
+using DocumentFormat.OpenXml;
+using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Spreadsheet;
 using UglyToad.PdfPig;
-using UglyToad.PdfPig.DocumentLayoutAnalysis;
-using UglyToad.PdfPig.DocumentLayoutAnalysis.PageSegmenter;
-using UglyToad.PdfPig.Util;
 
 namespace easywk_parser_dotnet
 {
-    class EasywkParser
+    class Program
     {
-        private readonly PdfDocument _document;
-        
-        private Regex _laufRegex = new Regex(@"(Lauf) (\d+)/(\d+) (.*)");
-        
-        private string _wettkampf = "";
-        private string _lauf = "";
-
-        
         public static void Main(string[] args)
         {
             // Display the number of command line arguments.
             Console.WriteLine("Arguments count: " + args.Length);
             Console.WriteLine("Hello, World!");
-            var filePath = @"/Users/nschle85/IdeaProjects/MeldelisteParser/meldeliste.pdf";
+            //var filePath = @"/Users/nschle85/IdeaProjects/MeldelisteParser/meldeliste.pdf";
+            var filePath = args[0];
             using (PdfDocument document = PdfDocument.Open(filePath))
             {
-                var parser = new EasywkParser(document);
+                var parser = new ParserImpl(document);
                 var result = parser.Parse();
                 using (StreamWriter outputFile = new StreamWriter(filePath + "-fromdotnet.csv"))
                 {
-                    outputFile.WriteLine("Wettkampf\tLauf\tBahn\tSchwimmer\tVerein\tMeldezeit");
-                    foreach (var starterLine in result)
-                    {
-                        Console.WriteLine(starterLine.toString());
-                        outputFile.WriteLine(starterLine.toString());
-                    }
+                    ExportCSV(result, outputFile);
+                }
+                
+                using (StreamWriter outputFile = new StreamWriter(filePath + "-fromdotnet.xls"))
+                {
+                    ExportXLS(result, outputFile);
+                }
+                
+                using (SpreadsheetDocument outputFile = SpreadsheetDocument.Create(filePath + "-fromdotnet.xlsx", SpreadsheetDocumentType.Workbook))
+                {
+                    ExportXLSX(result, outputFile);
                 }
             }
         }
 
-        public EasywkParser(PdfDocument document)
+        private static void ExportCSV(List<StarterLine> result, StreamWriter outputFile)
         {
-            this._document = document;
-        }
-
-        public List<StarterLine> Parse()
-        {
-            List<StarterLine> result = []; 
-            foreach (var page in _document.GetPages())
+            outputFile.WriteLine("Wettkampf\tLauf\tBahn\tSchwimmer\tVerein\tMeldezeit");
+            foreach (var starterLine in result)
             {
-                var pageText = page.Text;
-                var words = DefaultWordExtractor.Instance.GetWords(page.Letters);
-                var blocks = DefaultPageSegmenter.Instance.GetBlocks(words);
-                foreach (var textBlock in blocks)
-                {
-                    foreach (var textBlockTextLine in textBlock.TextLines)
-                    {
-                        var line = ParseTextLine(textBlockTextLine);
-                        if (line!=null)
-                        {
-                            result.Add(line);
-                        }
-                    }
-                }
+                Console.WriteLine(starterLine.toString());
+                outputFile.WriteLine(starterLine.toString());
             }
-
-            return result;
-        }
-
-        private StarterLine? ParseTextLine(TextLine textLine)
-        {
-            StarterLine result = null;
-            var line = textLine.Text;
-            //Console.WriteLine(line);
-            
-            if (line.StartsWith("Wettkampf"))
-            {
-                _wettkampf = line;
-            }
-            else if (line.StartsWith("Lauf"))
-            {
-                // Matcher laufMatcher = laufPattern.matcher(line);
-                var  laufMatcher = _laufRegex.Match(line);
-                if (laufMatcher.Success)
-                {
-                    _lauf = laufMatcher.Groups[1].Value + " " + toLeadingZeroString(laufMatcher.Groups[2].Value) + "/" + toLeadingZeroString(laufMatcher.Groups[3].Value) + " " + laufMatcher.Groups[4].Value;
-                }
-                else
-                {
-                    Console.Error.WriteLine("No matching Lauf:" + line);
-                }
-            }
-            else if (line.StartsWith("Bahn"))
-            {
-                // match (Bahn), (BahnNummer), (schwimmer: Teilnehmer, Jahrgang, Verein etc), (Meldezeit)
-                var r = new Regex(@"(Bahn) (\d+) (.+?) (\d+:\d+,\d+)");
-                // Now create matcher object.
-                var m = r.Match(line);
-                if (m.Success)
-                {
-                    // var bahn = m.group(1);
-                    var bahnNr = m.Groups[2].Value;
-                    var schwimmer = m.Groups[3].Value;
-
-                    //extract verein if possible and update schwimmer and verein
-                    string verein = "";
-
-                    // Phdksfh, Fdsds  2013/ TSV Neuburg
-                    var schwimmerVereinPattern = new Regex(@"(.+?)\/ (.*)");
-                    var schwimmerVereinMatcher = schwimmerVereinPattern.Match(schwimmer);
-
-                    // Rdsds, Sfdfd  1978/AK 45	SV Lohhof
-                    var schwimmerAkVereinPattern = new Regex(@"(.+?\/AK \d+) (.*)");
-                    var schwimmerAkVereinMatcher = schwimmerAkVereinPattern.Match(schwimmer);
-
-                    //Rdsds, Sfdfd  1978 45	SV Lohhof
-                    var schwimmerJgVereinPattern = new Regex(@"(.+? \d+) (.*)");
-                    var schwimmerJgVereinMatcher = schwimmerJgVereinPattern.Match(schwimmer);
-
-                    //Rdsds, Sfdfd  Offen 45 SV Lohhof
-                    var schwimmerOffenVereinPattern = new Regex(@"(.+? Offen) (.*)");
-                    var schwimmerOffenVereinMatcher = schwimmerOffenVereinPattern.Match(schwimmer);
-
-                    if (schwimmerVereinMatcher.Success) {
-                             schwimmer = schwimmerVereinMatcher.Groups[1].Value;
-                             verein = schwimmerVereinMatcher.Groups[2].Value;
-                    }
-                    else if (schwimmerAkVereinMatcher.Success) {
-                             schwimmer = schwimmerAkVereinMatcher.Groups[1].Value;
-                             verein = schwimmerAkVereinMatcher.Groups[2].Value;
-                    }
-                    else if (schwimmerJgVereinMatcher.Success) {
-                             schwimmer = schwimmerJgVereinMatcher.Groups[1].Value;
-                             verein = schwimmerJgVereinMatcher.Groups[2].Value;
-                    }
-                    else if (schwimmerOffenVereinMatcher.Success) {
-                             schwimmer = schwimmerOffenVereinMatcher.Groups[1].Value;
-                             verein = schwimmerOffenVereinMatcher.Groups[2].Value;
-                    }
-
-                    else {
-                            Console.Error.WriteLine("Could not parse: " + schwimmer);
-                    }
-                    
-                    var meldezeit = m.Groups[4].Value;
-                    
-                    result = new StarterLine(_wettkampf, _lauf, bahnNr, schwimmer, verein, meldezeit);
-                }
-            }
-            else
-            {
-                Console.Error.WriteLine("NO MATCH "+ line);
-            }
-
-            return result;
         }
         
-        private string toLeadingZeroString(string value)
+        private static void ExportXLS(List<StarterLine> result, StreamWriter outputFile)
+        { 
+            String topPart ="""
+                <html            
+                    xmlns:o="urn:schemas-microsoft-com:office:office">
+                    xmlns:x="urn:schemas-microsoft-com:office:excel"
+                    xmlns="http://www.w3.org/TR/REC-html40">
+                        <head>
+                            <meta http-equiv=Content-Type content="text/html; charset=utf-8">
+                            <meta name=ProgId content=Excel.Sheet>
+                            <meta name=Generator content="Microsoft Excel 11">
+                            <style id="STI_5961_Styles">
+                        </head>
+                <body>
+                    <div id="STI_5961" align=center x:publishsource="Excel">
+                     <table x:str border=0 cellpadding=0 cellspacing=0 width=2020 style='border-collapse: 
+                       collapse;table-layout:fixed;width:1518pt'>
+                        <col width=147 style='mso-width-source:userset;mso-width-alt:5376;width:110pt'>
+                        <col width=55 style='mso-width-source:userset;mso-width-alt:2011;width:41pt'>
+                        <col width=55 style='mso-width-source:userset;mso-width-alt:2011;width:41pt'>
+                        <col width=55 style='mso-width-source:userset;mso-width-alt:2011;width:41pt'>
+                        <col width=55 style='mso-width-source:userset;mso-width-alt:2011;width:41pt'>
+                        <col width=55 style='mso-width-source:userset;mso-width-alt:2011;width:41pt'>
+                        
+                        <tr class=xlGeneralBold height=51 style='mso-height-source:userset;height:38.25pt'>
+                            <td height=51 class=xlGeneralBold width=147 style='height:38.25pt;width:110pt'>Wettkampf</td>
+                            <td class=xlGeneralBold width=55 style='border-left:none;width:41pt'>Lauf</td>
+                            <td class=xlGeneralBold width=55 style='border-left:none;width:41pt'>Bahn</td>
+                            <td class=xlGeneralBold width=55 style='border-left:none;width:41pt'>Schwimmer</td>
+                            <td class=xlGeneralBold width=55 style='border-left:none;width:41pt'>Verein</td>
+                            <td class=xlGeneralBold width=55 style='border-left:none;width:41pt'>Meldezeit</td>
+                       </tr>
+                """; 
+            
+            String bottomPart ="""
+                       </table>
+                      </div>
+                    </body>
+                </html>
+                """;
+            
+            //outputFile.WriteLine("Wettkampf\tLauf\tBahn\tSchwimmer\tVerein\tMeldezeit");
+            outputFile.WriteLine(topPart);
+            foreach (var starterLine in result)
+            {
+                Console.WriteLine(starterLine.toHtmlRow());
+                outputFile.WriteLine(starterLine.toHtmlRow());
+            }
+            outputFile.WriteLine(bottomPart);
+        }
+
+        private static void ExportXLSX(List<StarterLine> result, SpreadsheetDocument doc)
         {
-            return Int32.Parse(value).ToString("00");
+            WorkbookPart workbookPart = doc.AddWorkbookPart();
+            workbookPart.Workbook = new Workbook();
+            WorksheetPart worksheetPart = workbookPart.AddNewPart<WorksheetPart>();
+            worksheetPart.Worksheet = new Worksheet(new SheetData());
+            Sheets sheets = doc.WorkbookPart.Workbook.AppendChild(new Sheets());
+            Sheet sheet = new Sheet()
+                { Id = doc.WorkbookPart.GetIdOfPart(worksheetPart), SheetId = 1, Name = "Sheet1" };
+            sheets.Append(sheet);
+            // workbookPart.Workbook.Save();
+
+            SheetData sheetData = worksheetPart.Worksheet.Elements<SheetData>().First();
+            
+            var headerRow = new Row();
+            headerRow.Append(new Cell()
+            {
+                DataType = CellValues.String,
+                CellValue = new CellValue("Wettkampf")
+            });
+            headerRow.Append(new Cell()
+            {
+                DataType = CellValues.String,
+                CellValue = new CellValue("Lauf")
+            });
+            headerRow.Append(new Cell()
+            {
+                DataType = CellValues.String,
+                CellValue = new CellValue("Bahn")
+            });
+            headerRow.Append(new Cell()
+            {
+                DataType = CellValues.String,
+                CellValue = new CellValue("Teilnehmer")
+            });
+            headerRow.Append(new Cell()
+            {
+                DataType = CellValues.String,
+                CellValue = new CellValue("Verein")
+            });
+            headerRow.Append(new Cell()
+            {
+                DataType = CellValues.String,
+                CellValue = new CellValue("Meldezeit")
+            });
+            sheetData.Append(headerRow);
+            
+            foreach (var starterLine in result)
+            {
+                Console.WriteLine(starterLine.toString());
+                sheetData.Append(starterLine.toXLSXRow());
+            }
+            
+            workbookPart.Workbook.Save();
+            
+            
+            
         }
     }
     
