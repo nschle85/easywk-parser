@@ -1,7 +1,3 @@
 # easywk-parser
 
-Node Typescript
-Builden Sie das Projekt: npm run build
-Starten Sie das Projekt: npm start
-Entwickeln Sie mit automatischem Neustart: npm run dev
-Bereinigen Sie das dist-Verzeichnis: npm run clean
+THis Project contains several implementations to read the easywk meldelisten and make them more comfortable to use for the trainers.
