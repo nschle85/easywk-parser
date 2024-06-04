@@ -42,7 +42,7 @@ public class StarterLine
                  """;
     }
 
-    public Row toXLSXRow()
+    public Row toXLSXRowWettkampf()
     {
         var result = new Row();
         result.Append(new Cell()
@@ -64,6 +64,42 @@ public class StarterLine
         {
             DataType = CellValues.String,
             CellValue = new CellValue(this._teilnehmer)
+        });
+        result.Append(new Cell()
+        {
+            DataType = CellValues.String,
+            CellValue = new CellValue(this._verein)
+        });
+        result.Append(new Cell()
+        {
+            DataType = CellValues.String,
+            CellValue = new CellValue(this._meldezeit)
+        });
+        return result;
+    }
+    
+    public Row toXLSXRowTeilnehmer()
+    {
+        var result = new Row();
+        result.Append(new Cell()
+        {
+            DataType = CellValues.String,
+            CellValue = new CellValue(this._teilnehmer)
+        });
+        result.Append(new Cell()
+        {
+            DataType = CellValues.String,
+            CellValue = new CellValue(this._wettkampf)
+        });
+        result.Append(new Cell()
+        {
+            DataType = CellValues.String,
+            CellValue = new CellValue(this._lauf)
+        });
+        result.Append(new Cell()
+        {
+            DataType = CellValues.Number,
+            CellValue = new CellValue(this._bahn)
         });
         result.Append(new Cell()
         {

@@ -20,17 +20,20 @@ namespace easywk_parser_dotnet
             {
                 var parser = new ParserImpl(document);
                 var result = parser.Parse();
-                using (StreamWriter outputFile = new StreamWriter(filePath + "-fromdotnet.csv"))
+                
+                /*
+                using (StreamWriter outputFile = new StreamWriter(filePath + "-fromdotnet_"+DateTime.Now.ToString("yyyyMMdd-HHmmss")+".csv"))
                 {
                     ExportCSV(result, outputFile);
                 }
                 
-                using (StreamWriter outputFile = new StreamWriter(filePath + "-fromdotnet.xls"))
+                using (StreamWriter outputFile = new StreamWriter(filePath + "-fromdotnet_"+DateTime.Now.ToString("yyyyMMdd-HHmmss")+".xls"))
                 {
                     ExportXLS(result, outputFile);
                 }
+                */
                 
-                using (SpreadsheetDocument outputFile = SpreadsheetDocument.Create(filePath + "-fromdotnet.xlsx", SpreadsheetDocumentType.Workbook))
+                using (SpreadsheetDocument outputFile = SpreadsheetDocument.Create(filePath + "-fromdotnet_"+DateTime.Now.ToString("yyyyMMdd-HHmmss")+".xlsx", SpreadsheetDocumentType.Workbook))
                 {
                     ExportXLSX(result, outputFile);
                 }
@@ -97,63 +100,161 @@ namespace easywk_parser_dotnet
             }
             outputFile.WriteLine(bottomPart);
         }
-
+        
         private static void ExportXLSX(List<StarterLine> result, SpreadsheetDocument doc)
         {
+            //GeneralPart
             WorkbookPart workbookPart = doc.AddWorkbookPart();
             workbookPart.Workbook = new Workbook();
-            WorksheetPart worksheetPart = workbookPart.AddNewPart<WorksheetPart>();
-            worksheetPart.Worksheet = new Worksheet(new SheetData());
             Sheets sheets = doc.WorkbookPart.Workbook.AppendChild(new Sheets());
-            Sheet sheet = new Sheet()
-                { Id = doc.WorkbookPart.GetIdOfPart(worksheetPart), SheetId = 1, Name = "Sheet1" };
-            sheets.Append(sheet);
+            
+            //Sheet Wettkampf
+            WorksheetPart worksheetPartWettkampf = workbookPart.AddNewPart<WorksheetPart>();
+            worksheetPartWettkampf.Worksheet = new Worksheet(new SheetData());
+            
+            Sheet sheetWettkampf = new Sheet()
+                { Id = doc.WorkbookPart.GetIdOfPart(worksheetPartWettkampf), SheetId = 1, Name = "Sheet Wettkampf" };
+            sheets.Append(sheetWettkampf);
             // workbookPart.Workbook.Save();
 
-            SheetData sheetData = worksheetPart.Worksheet.Elements<SheetData>().First();
+            SheetData sheetDataWettkampf = worksheetPartWettkampf.Worksheet.Elements<SheetData>().First();
             
-            var headerRow = new Row();
-            headerRow.Append(new Cell()
+            var headerRowWettkampf = new Row();
+            headerRowWettkampf.Append(new Cell()
             {
                 DataType = CellValues.String,
                 CellValue = new CellValue("Wettkampf")
             });
-            headerRow.Append(new Cell()
+            headerRowWettkampf.Append(new Cell()
             {
                 DataType = CellValues.String,
                 CellValue = new CellValue("Lauf")
             });
-            headerRow.Append(new Cell()
+            headerRowWettkampf.Append(new Cell()
             {
                 DataType = CellValues.String,
                 CellValue = new CellValue("Bahn")
             });
-            headerRow.Append(new Cell()
+            headerRowWettkampf.Append(new Cell()
             {
                 DataType = CellValues.String,
                 CellValue = new CellValue("Teilnehmer")
             });
-            headerRow.Append(new Cell()
+            headerRowWettkampf.Append(new Cell()
             {
                 DataType = CellValues.String,
                 CellValue = new CellValue("Verein")
             });
-            headerRow.Append(new Cell()
+            headerRowWettkampf.Append(new Cell()
             {
                 DataType = CellValues.String,
                 CellValue = new CellValue("Meldezeit")
             });
-            sheetData.Append(headerRow);
+            sheetDataWettkampf.Append(headerRowWettkampf);
             
             foreach (var starterLine in result)
             {
                 Console.WriteLine(starterLine.toString());
-                sheetData.Append(starterLine.toXLSXRow());
+                sheetDataWettkampf.Append(starterLine.toXLSXRowWettkampf());
             }
             
-            workbookPart.Workbook.Save();
+            
+            //Sheet Teilnehmer
+            WorksheetPart worksheetPartTeilnehmer = workbookPart.AddNewPart<WorksheetPart>();
+            worksheetPartTeilnehmer.Worksheet = new Worksheet(new SheetData());
+            
+            Sheet sheetTeilnehmer = new Sheet()
+                { Id = doc.WorkbookPart.GetIdOfPart(worksheetPartTeilnehmer), SheetId = 2, Name = "Sheet Teilnehmer" };
+            sheets.Append(sheetTeilnehmer);
+            // workbookPart.Workbook.Save();
+
+            SheetData sheetDataTeilnehmer = worksheetPartTeilnehmer.Worksheet.Elements<SheetData>().First();
+            
+            var headerRowTeilnehmer = new Row();
+            headerRowTeilnehmer.Append(new Cell()
+            {
+                DataType = CellValues.String,
+                CellValue = new CellValue("Teilnehmer")
+            });
+            headerRowTeilnehmer.Append(new Cell()
+            {
+                DataType = CellValues.String,
+                CellValue = new CellValue("Wettkampf")
+            });
+            headerRowTeilnehmer.Append(new Cell()
+            {
+                DataType = CellValues.String,
+                CellValue = new CellValue("Lauf")
+            });
+            headerRowTeilnehmer.Append(new Cell()
+            {
+                DataType = CellValues.String,
+                CellValue = new CellValue("Bahn")
+            });
+            headerRowTeilnehmer.Append(new Cell()
+            {
+                DataType = CellValues.String,
+                CellValue = new CellValue("Verein")
+            });
+            headerRowTeilnehmer.Append(new Cell()
+            {
+                DataType = CellValues.String,
+                CellValue = new CellValue("Meldezeit")
+            });
+            sheetDataTeilnehmer.Append(headerRowTeilnehmer);
+            
+            foreach (var starterLine in result)
+            {
+                Console.WriteLine(starterLine.toString());
+                sheetDataTeilnehmer.Append(starterLine.toXLSXRowTeilnehmer());
+            }
             
             
+            
+            
+            //add table 
+            /*
+            WorksheetPart tableSheetPart = workbookPart.AddNewPart<WorksheetPart>();
+            tableSheetPart.Worksheet = new Worksheet(new SheetData());
+
+            TableDefinitionPart tableDefinitionPart = tableSheetPart.AddNewPart<TableDefinitionPart>();
+            int tableNo = worksheetPart.TableDefinitionParts.Count();
+
+            var colMin = 0;
+            var rowMin = 0;
+            var colMax = 4;
+            var rowMax = 20;
+            string reference = "A0:D20";
+
+            
+            Table table = new Table() { Id = (UInt32)tableNo, Name = "Table" + tableNo, DisplayName = "Table" + tableNo, Reference = reference, TotalsRowShown = false };
+            AutoFilter autoFilter = new AutoFilter() { Reference = reference };
+
+            TableColumns tableColumns = new TableColumns() { Count = (UInt32)(colMax - colMin + 1) };
+            for (int i = 0; i < (colMax - colMin + 1); i++)
+            {
+                tableColumns.Append(new TableColumn() { Id = (UInt32)(colMin + i), Name = "Column" + i });
+            }
+
+            TableStyleInfo tableStyleInfo = new TableStyleInfo() { Name = "TableStyleLight1", ShowFirstColumn = false, ShowLastColumn = false, ShowRowStripes = true, ShowColumnStripes = false };
+
+            table.Append(autoFilter);
+            table.Append(tableColumns);
+            table.Append(tableStyleInfo);
+
+            tableDefinitionPart.Table = table;
+
+            TableParts tableParts = new TableParts() { Count = (UInt32)1 };
+            TablePart tablePart = new TablePart() { Id = "rId" + tableNo };
+
+            tableParts.Append(tablePart);
+
+            worksheetPart.Worksheet.Append(tableParts);
+            
+            Sheet tableSheet = new Sheet()
+                { Id = doc.WorkbookPart.GetIdOfPart(tableSheetPart), SheetId = 2, Name = "Sheet2" };
+            sheets.Append(tableSheet);
+            */
             
         }
     }
