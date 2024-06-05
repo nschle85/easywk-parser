@@ -57,7 +57,7 @@ public class StarterLine
         });
         result.Append(new Cell()
         {
-            DataType = CellValues.Number,
+            DataType = CellValues.String,
             CellValue = new CellValue(this._bahn)
         });
         result.Append(new Cell()
@@ -98,7 +98,7 @@ public class StarterLine
         });
         result.Append(new Cell()
         {
-            DataType = CellValues.Number,
+            DataType = CellValues.String,
             CellValue = new CellValue(this._bahn)
         });
         result.Append(new Cell()

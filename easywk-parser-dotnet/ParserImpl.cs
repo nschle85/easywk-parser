@@ -129,7 +129,7 @@ public class ParserImpl
                     
                     var meldezeit = m.Groups[4].Value;
                     
-                    result = new StarterLine(_wettkampf, _lauf, bahnNr, schwimmer, verein, meldezeit);
+                    result = new StarterLine(_wettkampf, _lauf, "Bahn "+bahnNr, schwimmer, verein, meldezeit);
                 }
             }
             else

@@ -108,12 +108,62 @@ namespace easywk_parser_dotnet
             workbookPart.Workbook = new Workbook();
             Sheets sheets = doc.WorkbookPart.Workbook.AppendChild(new Sheets());
             
+            //Sheet all
+            WorksheetPart worksheetPartAll = workbookPart.AddNewPart<WorksheetPart>();
+            
+            worksheetPartAll.Worksheet = new Worksheet(new SheetData());
+            Sheet sheetAll = new Sheet()
+                { Id = doc.WorkbookPart.GetIdOfPart(worksheetPartAll), SheetId = 1, Name = "Sheet All" };
+            sheets.Append(sheetAll);
+            // workbookPart.Workbook.Save();
+
+            SheetData sheetDataAll = worksheetPartAll.Worksheet.Elements<SheetData>().First();
+            
+            var headerRowAll = new Row();
+            headerRowAll.Append(new Cell()
+            {
+                DataType = CellValues.String,
+                CellValue = new CellValue("Wettkampf")
+            });
+            headerRowAll.Append(new Cell()
+            {
+                DataType = CellValues.String,
+                CellValue = new CellValue("Lauf")
+            });
+            headerRowAll.Append(new Cell()
+            {
+                DataType = CellValues.String,
+                CellValue = new CellValue("Bahn")
+            });
+            headerRowAll.Append(new Cell()
+            {
+                DataType = CellValues.String,
+                CellValue = new CellValue("Teilnehmer")
+            });
+            headerRowAll.Append(new Cell()
+            {
+                DataType = CellValues.String,
+                CellValue = new CellValue("Verein")
+            });
+            headerRowAll.Append(new Cell()
+            {
+                DataType = CellValues.String,
+                CellValue = new CellValue("Meldezeit")
+            });
+            sheetDataAll.Append(headerRowAll);
+            
+            foreach (var starterLine in result)
+            {
+                Console.WriteLine(starterLine.toString());
+                sheetDataAll.Append(starterLine.toXLSXRowWettkampf());
+            }
+            
             //Sheet Wettkampf
             WorksheetPart worksheetPartWettkampf = workbookPart.AddNewPart<WorksheetPart>();
-            worksheetPartWettkampf.Worksheet = new Worksheet(new SheetData());
             
+            worksheetPartWettkampf.Worksheet = new Worksheet(new SheetData());
             Sheet sheetWettkampf = new Sheet()
-                { Id = doc.WorkbookPart.GetIdOfPart(worksheetPartWettkampf), SheetId = 1, Name = "Sheet Wettkampf" };
+                { Id = doc.WorkbookPart.GetIdOfPart(worksheetPartWettkampf), SheetId = 2, Name = "Sheet Wettkampf" };
             sheets.Append(sheetWettkampf);
             // workbookPart.Workbook.Save();
 
@@ -158,13 +208,19 @@ namespace easywk_parser_dotnet
                 sheetDataWettkampf.Append(starterLine.toXLSXRowWettkampf());
             }
             
+            // Set the page orientation to landscape (horizontal)
+            PageSetup pageSetupWettkampf = new PageSetup()
+            {
+                Orientation = OrientationValues.Landscape
+            };
+            worksheetPartWettkampf.Worksheet.Append(pageSetupWettkampf);
             
             //Sheet Teilnehmer
             WorksheetPart worksheetPartTeilnehmer = workbookPart.AddNewPart<WorksheetPart>();
             worksheetPartTeilnehmer.Worksheet = new Worksheet(new SheetData());
             
             Sheet sheetTeilnehmer = new Sheet()
-                { Id = doc.WorkbookPart.GetIdOfPart(worksheetPartTeilnehmer), SheetId = 2, Name = "Sheet Teilnehmer" };
+                { Id = doc.WorkbookPart.GetIdOfPart(worksheetPartTeilnehmer), SheetId = 3, Name = "Sheet Teilnehmer" };
             sheets.Append(sheetTeilnehmer);
             // workbookPart.Workbook.Save();
 
@@ -208,9 +264,11 @@ namespace easywk_parser_dotnet
                 Console.WriteLine(starterLine.toString());
                 sheetDataTeilnehmer.Append(starterLine.toXLSXRowTeilnehmer());
             }
-            
-            
-            
+            PageSetup pageSetupTeilnehmer = new PageSetup()
+            {
+                Orientation = OrientationValues.Landscape
+            };
+            worksheetPartTeilnehmer.Worksheet.Append(pageSetupTeilnehmer);
             
             //add table 
             /*
