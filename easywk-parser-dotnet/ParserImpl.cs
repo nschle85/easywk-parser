@@ -15,6 +15,11 @@ public class ParserImpl
     private readonly Regex _wettkampfRegex = new Regex(@"(Wettkampf) (\d+) (.*)");
     private readonly Regex _laufRegex = new Regex(@"(Lauf) (\d+)/(\d+) (.*)");
     
+    //Splash Meet Manager, 11.79888
+    private readonly Regex _wettkampfRegexNew = new Regex(@"(Wettkampf) (\d+),(.*)");
+    private readonly Regex _laufRegexNew = new Regex(@"(Lauf) (\d+) von (\d+)(.*)");
+    private readonly Regex _bahnRegexNew = new Regex(@"^(\d+) (.*?)");
+    
     public ParserImpl(PdfDocument document)
         {
             this._document = document;
@@ -53,9 +58,11 @@ public class ParserImpl
             if (line.StartsWith("Wettkampf"))
             {
                 var  wettkampfMatcher = _wettkampfRegex.Match(line);
+                var wettkampfMAtcherNew = _wettkampfRegexNew.Match(line);
                 if (wettkampfMatcher.Success)
                 {
                     _wettkampf = wettkampfMatcher.Groups[1].Value + " " + ToLeadingZeroString(wettkampfMatcher.Groups[2].Value) + " " + wettkampfMatcher.Groups[3].Value;
+                    Console.WriteLine("Found parsed :"+_wettkampf);
                 }
                 else
                 {
@@ -65,10 +72,17 @@ public class ParserImpl
             else if (line.StartsWith("Lauf"))
             {
                 // Matcher laufMatcher = laufPattern.matcher(line);
-                var  laufMatcher = _laufRegex.Match(line);
+                var laufMatcher = _laufRegex.Match(line);
+                var laufMatcherNew = _laufRegexNew.Match(line);
                 if (laufMatcher.Success)
                 {
-                    _lauf = laufMatcher.Groups[1].Value + " " + ToLeadingZeroString(laufMatcher.Groups[2].Value) + "/" + ToLeadingZeroString(laufMatcher.Groups[3].Value) + " " + laufMatcher.Groups[4].Value;
+                    _lauf = laufMatcher.Groups[1].Value + " " + ToLeadingZeroString(laufMatcher.Groups[2].Value) + 
+                            "/" + ToLeadingZeroString(laufMatcher.Groups[3].Value) + " " + laufMatcher.Groups[4].Value;
+                }
+                else if (laufMatcherNew.Success)
+                {
+                    _lauf = laufMatcherNew.Groups[1].Value + " " + ToLeadingZeroString(laufMatcherNew.Groups[2].Value) +
+                            "/" + ToLeadingZeroString(laufMatcherNew.Groups[3].Value);
                 }
                 else
                 {
@@ -130,6 +144,55 @@ public class ParserImpl
                     var meldezeit = m.Groups[4].Value;
                     
                     result = new StarterLine(_wettkampf, _lauf, "Bahn "+bahnNr, schwimmer, verein, meldezeit);
+                }
+            }
+            else if (_bahnRegexNew.Match(line).Success)
+            {
+                // match (BahnNummer), (schwimmer: Teilnehmer, Jahrgang, Verein etc), (Meldezeit)
+                //var r = new Regex(@"^(\d+) (.*)");
+                var r = new Regex(@"^(\d+) (.+?) ((\d+:\d+\.\d+)|(NT)|(\d+\.\d+))");
+                // Now create matcher object.
+                var m = r.Match(line);
+                if (m.Success)
+                {
+                    // var bahn = m.group(1);
+                    var bahnNr = m.Groups[1].Value;
+                    var schwimmer = m.Groups[2].Value;
+                    
+                    string verein = "";
+                    
+                    // Schwimmer GER Verein
+                    var schwimmerVereinPattern = new Regex(@"(.+?) GER (.*)");
+                    var schwimmerVereinMatcher = schwimmerVereinPattern.Match(schwimmer);
+                    
+                    // Rdsds, Sfdfd  1978/AK 45	SV Lohhof                                     
+                    var schwimmerAkVereinPattern = new Regex(@"(.+?\/AK \d+) (.*)");          
+                    var schwimmerAkVereinMatcher = schwimmerAkVereinPattern.Match(schwimmer); 
+                    
+                    if (schwimmerVereinMatcher.Success) {
+                        schwimmer = schwimmerVereinMatcher.Groups[1].Value;
+                        verein = schwimmerVereinMatcher.Groups[2].Value;
+                    }
+                    else if (schwimmerAkVereinMatcher.Success) {
+                        schwimmer = schwimmerAkVereinMatcher.Groups[1].Value;
+                        verein = schwimmerAkVereinMatcher.Groups[2].Value;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Cannot parse Schwimmer: "+schwimmer);
+                    }
+                    var meldezeit = m.Groups[3].Value;
+                    
+                    if (_wettkampf.Length>0 && _lauf.Length >0)
+                    {
+                        result = new StarterLine(_wettkampf, _lauf, bahnNr, schwimmer, verein, meldezeit);
+                        //Console.WriteLine("Matched new bahn" + line);
+                    }
+                    
+                }
+                else
+                {
+                    Console.WriteLine("No Matched new bahn"+ line);
                 }
             }
             else

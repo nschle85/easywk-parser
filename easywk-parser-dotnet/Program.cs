@@ -154,7 +154,7 @@ namespace easywk_parser_dotnet
             
             foreach (var starterLine in result)
             {
-                Console.WriteLine(starterLine.toString());
+                //Console.WriteLine(starterLine.toString());
                 sheetDataAll.Append(starterLine.toXLSXRowWettkampf());
             }
             
@@ -204,7 +204,7 @@ namespace easywk_parser_dotnet
             
             foreach (var starterLine in result)
             {
-                Console.WriteLine(starterLine.toString());
+                //Console.WriteLine(starterLine.toString());
                 sheetDataWettkampf.Append(starterLine.toXLSXRowWettkampf());
             }
             
@@ -214,6 +214,14 @@ namespace easywk_parser_dotnet
                 Orientation = OrientationValues.Landscape
             };
             worksheetPartWettkampf.Worksheet.Append(pageSetupWettkampf);
+            
+            // Add AutoFilter to the first column
+            //AutoFilter autoFilter = new AutoFilter() { Reference = "A1:A3" };
+            //worksheetPartWettkampf.Worksheet.InsertAfter(autoFilter, worksheetPartWettkampf.Worksheet.Elements<SheetData>().First());
+            
+            
+            
+            
             
             //Sheet Teilnehmer
             WorksheetPart worksheetPartTeilnehmer = workbookPart.AddNewPart<WorksheetPart>();
@@ -261,7 +269,7 @@ namespace easywk_parser_dotnet
             
             foreach (var starterLine in result)
             {
-                Console.WriteLine(starterLine.toString());
+                //Console.WriteLine(starterLine.toString());
                 sheetDataTeilnehmer.Append(starterLine.toXLSXRowTeilnehmer());
             }
             PageSetup pageSetupTeilnehmer = new PageSetup()
