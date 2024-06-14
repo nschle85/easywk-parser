@@ -14,11 +14,14 @@ public class ParserImpl
     
     private readonly Regex _wettkampfRegex = new Regex(@"(Wettkampf) (\d+) (.*)");
     private readonly Regex _laufRegex = new Regex(@"(Lauf) (\d+)/(\d+) (.*)");
+    // match (Bahn), (BahnNummer), (schwimmer: Teilnehmer, Jahrgang, Verein etc), (Meldezeit)
+    private readonly Regex _bahnRegex = new Regex(@"(Bahn) (\d+) (.+?) (\d+:\d+,\d+)");
     
     //Splash Meet Manager, 11.79888
     private readonly Regex _wettkampfRegexNew = new Regex(@"(Wettkampf) (\d+),(.*)");
     private readonly Regex _laufRegexNew = new Regex(@"(Lauf) (\d+) von (\d+)(.*)");
     private readonly Regex _bahnRegexNew = new Regex(@"^(\d+) (.*?)");
+
     
     public ParserImpl(PdfDocument document)
         {
@@ -92,7 +95,7 @@ public class ParserImpl
             else if (line.StartsWith("Bahn"))
             {
                 // match (Bahn), (BahnNummer), (schwimmer: Teilnehmer, Jahrgang, Verein etc), (Meldezeit)
-                var r = new Regex(@"(Bahn) (\d+) (.+?) (\d+:\d+,\d+)");
+                var r = _bahnRegex;
                 // Now create matcher object.
                 var m = r.Match(line);
                 if (m.Success)
@@ -192,7 +195,7 @@ public class ParserImpl
                 }
                 else
                 {
-                    Console.WriteLine("No Matched new bahn"+ line);
+                    Console.WriteLine("No Matched bahn "+ line);
                 }
             }
             else
