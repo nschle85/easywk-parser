@@ -214,6 +214,7 @@ public class ParserImpl
                 var meldezeit = bahnLiReMatch.Groups[4].Value;
                 
                 Console.WriteLine("Found li re: "+bahnString+" "+bahnSchwimmerString+" "+meldezeit);
+                result = new StarterLine(_wettkampf, _lauf, "Bahn "+bahnString, bahnSchwimmerString, "VEREIN", meldezeit);
                 
             }
             else if (_wasteRegex.Match(line).Success)
