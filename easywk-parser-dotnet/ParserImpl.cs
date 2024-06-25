@@ -17,11 +17,11 @@ public class ParserImpl
     // match (Bahn), (BahnNummer), (schwimmer: Teilnehmer, Jahrgang, Verein etc), (Meldezeit)
     private readonly Regex _bahnRegex = new Regex(@"(Bahn) (\d+) (.+?) (\d+:\d+,\d+)");
     
-    //Splash Meet Manager, 11.79888
+    //Splash Meet Manager (SSM), 11.79888
     //private readonly Regex _wettkampfRegexNew = new Regex(@"(Wettkampf) (\d+),(.*)");
-    private readonly Regex _laufRegexNew = new Regex(@"(Lauf) (\d+) von (\d+)(.*)");
-    private readonly Regex _bahnRegexNew = new Regex(@"^(\d+) (.*?)");
-    private readonly Regex _bahnRegexNewLiRe = new Regex(@"^((li)|(re)) (\d+) (.*?)");
+    private readonly Regex _laufRegexSsm = new Regex(@"(Lauf) (\d+) von (\d+)(.*)");
+    private readonly Regex _bahnRegexSsm = new Regex(@"^(\d+) (.*?)");
+    private readonly Regex _bahnRegexSsmLiRe = new Regex(@"^(li|re) (\d+) (.*)");
     
     private readonly Regex _wasteRegex = new Regex(@"^((Ausrichter:)|(Splash Meet Manager,)|(\d+))|((Startliste)|(Mastersschwimmen))(.*?)");
 
@@ -80,7 +80,7 @@ public class ParserImpl
             {
                 // Matcher laufMatcher = laufPattern.matcher(line);
                 var laufMatcher = _laufRegex.Match(line);
-                var laufMatcherNew = _laufRegexNew.Match(line);
+                var laufMatcherNew = _laufRegexSsm.Match(line);
                 if (laufMatcher.Success)
                 {
                     _lauf = laufMatcher.Groups[1].Value + " " + ToLeadingZeroString(laufMatcher.Groups[2].Value) + 
@@ -154,7 +154,7 @@ public class ParserImpl
                     result = new StarterLine(_wettkampf, _lauf, "Bahn "+bahnNr, schwimmerVerein._schwimmer, schwimmerVerein._verein, meldezeit);
                 }
             }
-            else if (_bahnRegexNew.Match(line).Success)
+            else if (_bahnRegexSsm.Match(line).Success)
             {
                 // match (BahnNummer), (schwimmer: Teilnehmer, Jahrgang, Verein etc), (Meldezeit)
                 //var r = new Regex(@"^(\d+) (.*)");
@@ -204,10 +204,15 @@ public class ParserImpl
                     Console.WriteLine("No Matched bahn "+ line);
                 }
             }
-            else if (_bahnRegexNewLiRe.Match(line).Success)
+            else if (_bahnRegexSsmLiRe.Match(line).Success)
             {
+                var bahnLiReMatch = _bahnRegexSsmLiRe.Match(line);
+                // "li 8" or "re 9" 
+                var bahnString = bahnLiReMatch.Groups[1].Value + " " + bahnLiReMatch.Groups[2].Value;
+                var bahnSchwimmerString = bahnLiReMatch.Groups[3].Value;
                 
-                Console.WriteLine("Found li re:"+line);
+                Console.WriteLine("Found li re: "+bahnString+" "+bahnSchwimmerString);
+                
             }
             else if (_wasteRegex.Match(line).Success)
             {
