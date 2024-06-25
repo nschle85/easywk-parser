@@ -21,7 +21,9 @@ public class ParserImpl
     //private readonly Regex _wettkampfRegexNew = new Regex(@"(Wettkampf) (\d+),(.*)");
     private readonly Regex _laufRegexSsm = new Regex(@"(Lauf) (\d+) von (\d+)(.*)");
     private readonly Regex _bahnRegexSsm = new Regex(@"^(\d+) (.*?)");
-    private readonly Regex _bahnRegexSsmLiRe = new Regex(@"^(li|re) (\d+) (.*)");
+    private readonly Regex _bahnRegexSsmLiRe = new Regex(@"^(li|re) (\d+) (.+?) ((\d+:\d+\.\d+)|(NT)|(\d+\.\d+))");
+    
+    private readonly Regex _schwimmerVereinCountryRegexSsm = new Regex(@"(.+?) (GER|ROU) (.*)");
     
     private readonly Regex _wasteRegex = new Regex(@"^((Ausrichter:)|(Splash Meet Manager,)|(\d+))|((Startliste)|(Mastersschwimmen))(.*?)");
 
@@ -170,18 +172,17 @@ public class ParserImpl
                     
                     string verein = "";
 
-                    SchwimmerVerein schwimmerVerein = new SchwimmerVerein(schwimmerVereinString, verein);
+                    var schwimmerVerein = new SchwimmerVerein(schwimmerVereinString, verein);
                     
                     // NAME, Sirname - Erwin 1980 AK 40 ROU CSM Arad
-                    var schwimmerVereinPattern = new Regex(@"(.+?) (GER|ROU) (.*)");
-                    var schwimmerVereinMatcher = schwimmerVereinPattern.Match(schwimmerVereinString);
+                    var schwimmerVereinCountryMatcher = _schwimmerVereinCountryRegexSsm.Match(schwimmerVereinString);
                     
                     // Rdsds, Sfdfd  1978/AK 45	SV Lohhof                                     
                     var schwimmerAkVereinPattern = new Regex(@"(.+?\/AK \d+) (.*)");          
                     var schwimmerAkVereinMatcher = schwimmerAkVereinPattern.Match(schwimmerVereinString); 
                     
-                    if (schwimmerVereinMatcher.Success) {
-                        schwimmerVerein = new SchwimmerVerein(schwimmerVereinMatcher.Groups[1].Value,schwimmerVereinMatcher.Groups[3].Value);
+                    if (schwimmerVereinCountryMatcher.Success) {
+                        schwimmerVerein = new SchwimmerVerein(schwimmerVereinCountryMatcher.Groups[1].Value,schwimmerVereinCountryMatcher.Groups[3].Value);
                     }
                     else if (schwimmerAkVereinMatcher.Success) {
                         schwimmerVerein = new SchwimmerVerein(schwimmerAkVereinMatcher.Groups[1].Value, schwimmerAkVereinMatcher.Groups[2].Value);
@@ -210,8 +211,9 @@ public class ParserImpl
                 // "li 8" or "re 9" 
                 var bahnString = bahnLiReMatch.Groups[1].Value + " " + bahnLiReMatch.Groups[2].Value;
                 var bahnSchwimmerString = bahnLiReMatch.Groups[3].Value;
+                var meldezeit = bahnLiReMatch.Groups[4].Value;
                 
-                Console.WriteLine("Found li re: "+bahnString+" "+bahnSchwimmerString);
+                Console.WriteLine("Found li re: "+bahnString+" "+bahnSchwimmerString+" "+meldezeit);
                 
             }
             else if (_wasteRegex.Match(line).Success)
