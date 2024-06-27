@@ -123,6 +123,11 @@ public class ParserImpl
                     // Rdsds, Sfdfd  1978/AK 45	SV Lohhof
                     var schwimmerAkVereinPattern = new Regex(@"(.+?\/AK \d+) (.*)");
                     var schwimmerAkVereinMatcher = schwimmerAkVereinPattern.Match(schwimmerVereinString);
+                    
+                    // Rdsds, Sfdfd  1978/Jugend A SV Lohhof
+                    var schwimmerJugendVereinPattern = new Regex(@"(.+?\/(Jugend A|Jugend B|Jugend C|Jugend D|Junioren)) (.*)");
+                    var schwimmerJugendVereinMatcher = schwimmerJugendVereinPattern.Match(schwimmerVereinString);
+                    
 
                     //Rdsds, Sfdfd  1978 45	SV Lohhof
                     var schwimmerJgVereinPattern = new Regex(@"(.+? \d+) (.*)");
@@ -138,6 +143,10 @@ public class ParserImpl
                     else if (schwimmerAkVereinMatcher.Success)
                     {
                         schwimmerVerein = new SchwimmerVerein(schwimmerAkVereinMatcher.Groups[1].Value,schwimmerAkVereinMatcher.Groups[2].Value);
+                    }
+                    else if (schwimmerJugendVereinMatcher.Success)
+                    {
+                        schwimmerVerein = new SchwimmerVerein(schwimmerJugendVereinMatcher.Groups[1].Value,schwimmerJugendVereinMatcher.Groups[3].Value);
                     }
                     else if (schwimmerJgVereinMatcher.Success) {
                         schwimmerVerein=new SchwimmerVerein(schwimmerJgVereinMatcher.Groups[1].Value,schwimmerJgVereinMatcher.Groups[2].Value);
