@@ -225,6 +225,8 @@ namespace easywk_parser_dotnet
             };
             worksheetPartWettkampf.Worksheet.Append(pageSetupWettkampf);
             
+            // AddWettkampfTable(worksheetPartWettkampf);
+            
             // Add AutoFilter to the first column
             //AutoFilter autoFilter = new AutoFilter() { Reference = "A1:A3" };
             //worksheetPartWettkampf.Worksheet.InsertAfter(autoFilter, worksheetPartWettkampf.Worksheet.Elements<SheetData>().First());
@@ -339,6 +341,61 @@ namespace easywk_parser_dotnet
                 { Id = doc.WorkbookPart.GetIdOfPart(tableSheetPart), SheetId = 2, Name = "Sheet2" };
             sheets.Append(tableSheet);
             */
+            
+        }
+        
+        private static void AddWettkampfTable(WorksheetPart tableSheetPart)
+        {
+            //add table 
+            
+            //WorksheetPart tableSheetPart = workbookPart.AddNewPart<WorksheetPart>();
+            //tableSheetPart.Worksheet = new Worksheet(new SheetData());
+
+            TableDefinitionPart tableDefinitionPart = tableSheetPart.AddNewPart<TableDefinitionPart>();
+            int tableNo = tableSheetPart.TableDefinitionParts.Count();
+
+            var colMin = 0;
+            var rowMin = 0;
+            var colMax = 4;
+            var rowMax = 20;
+            string reference = "A0:B20";
+
+
+            Table table = new Table() { Id = (UInt32)tableNo, Name = "Table1" + tableNo, DisplayName = "Table1" + tableNo, Reference = reference, TotalsRowShown = false };
+            AutoFilter autoFilter = new AutoFilter() { Reference = reference };
+
+            /*
+            TableColumns tableColumns = new TableColumns() { Count = (UInt32)(colMax - colMin + 1) };
+            for (int i = 0; i < (colMax - colMin + 1); i++)
+            {
+                tableColumns.Append(new TableColumn() { Id = (UInt32)(colMin + i), Name = "Column" + i });
+            }
+            */
+            TableColumns tableColumns = new TableColumns() { Count = 2 };
+            
+            tableColumns.Append(new TableColumn() { Id = (UInt32)(0), Name = "Wettkampf"});
+            tableColumns.Append(new TableColumn() { Id = (UInt32)(1), Name = "Lauf"});
+
+            
+
+            TableStyleInfo tableStyleInfo = new TableStyleInfo() { Name = "TableStyleLight1", ShowFirstColumn = false, ShowLastColumn = false, ShowRowStripes = true, ShowColumnStripes = false };
+
+            table.Append(autoFilter);
+            table.Append(tableColumns);
+            table.Append(tableStyleInfo);
+
+            tableDefinitionPart.Table = table;
+
+            TableParts tableParts = new TableParts() { Count = (UInt32)1 };
+            TablePart tablePart = new TablePart() { Id = "rId" + tableNo };
+
+            tableParts.Append(tablePart);
+
+            tableSheetPart.Worksheet.Append(tableParts);
+
+            //Sheet tableSheet = new Sheet()
+            //    { Id = doc.WorkbookPart.GetIdOfPart(tableSheetPart), SheetId = 2, Name = "Sheet2" };
+            // sheets.Append(tableSheet);
             
         }
     }
