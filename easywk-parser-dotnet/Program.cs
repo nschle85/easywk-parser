@@ -165,6 +165,7 @@ namespace easywk_parser_dotnet
             Sheet sheetWettkampf = new Sheet()
                 { Id = doc.WorkbookPart.GetIdOfPart(worksheetPartWettkampf), SheetId = 2, Name = "Sheet Wettkampf" };
             sheets.Append(sheetWettkampf);
+            
             // workbookPart.Workbook.Save();
 
             SheetData sheetDataWettkampf = worksheetPartWettkampf.Worksheet.Elements<SheetData>().First();
@@ -208,10 +209,19 @@ namespace easywk_parser_dotnet
                 sheetDataWettkampf.Append(starterLine.toXLSXRowWettkampf());
             }
             
+            
+            SheetProperties spWettkampf = new SheetProperties(new PageSetupProperties());
+            worksheetPartWettkampf.Worksheet.SheetProperties = spWettkampf;
+            worksheetPartWettkampf.Worksheet.SheetProperties.PageSetupProperties.FitToPage = true;
+            
             // Set the page orientation to landscape (horizontal)
             PageSetup pageSetupWettkampf = new PageSetup()
             {
-                Orientation = OrientationValues.Landscape
+                Orientation = OrientationValues.Landscape,
+                PaperSize = 9, //A4 https://learn.microsoft.com/de-de/dotnet/api/documentformat.openxml.spreadsheet.pagesetup?view=openxml-3.0.1
+                FitToWidth = 1,
+                FitToHeight = 0
+                
             };
             worksheetPartWettkampf.Worksheet.Append(pageSetupWettkampf);
             
@@ -272,9 +282,17 @@ namespace easywk_parser_dotnet
                 //Console.WriteLine(starterLine.toString());
                 sheetDataTeilnehmer.Append(starterLine.toXLSXRowTeilnehmer());
             }
+            
+            SheetProperties spTeilnehmer = new SheetProperties(new PageSetupProperties());
+            worksheetPartTeilnehmer.Worksheet.SheetProperties = spTeilnehmer;
+            worksheetPartTeilnehmer.Worksheet.SheetProperties.PageSetupProperties.FitToPage = true;
+            
             PageSetup pageSetupTeilnehmer = new PageSetup()
             {
-                Orientation = OrientationValues.Landscape
+                Orientation = OrientationValues.Landscape,
+                PaperSize = 9, //A4 https://learn.microsoft.com/de-de/dotnet/api/documentformat.openxml.spreadsheet.pagesetup?view=openxml-3.0.1
+                FitToWidth = 1,
+                FitToHeight = 0
             };
             worksheetPartTeilnehmer.Worksheet.Append(pageSetupTeilnehmer);
             
