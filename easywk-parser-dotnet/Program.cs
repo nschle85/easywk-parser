@@ -348,7 +348,7 @@ namespace easywk_parser_dotnet
             // Tabellenstil definieren
             TableStyleInfo tableStyleInfo = new TableStyleInfo() 
             { 
-                Name = "TableStyleLight1", 
+                Name = "TableStyleMedium9", 
                 ShowFirstColumn = false, 
                 ShowLastColumn = false, 
                 ShowRowStripes = true, 
