@@ -14,6 +14,7 @@ public class ParserImpl
     
     private readonly Regex _wettkampfRegex = new Regex(@"(Wettkampf) (\d+) (.*)");
     private readonly Regex _laufRegex = new Regex(@"(Lauf) (\d+)/(\d+) (.*)");
+    private readonly Regex _laufShortRegex = new Regex(@"(Lauf) (\d+)/(\d+)");
     // match (Bahn), (BahnNummer), (schwimmer: Teilnehmer, Jahrgang, Verein etc), (Meldezeit)
     private readonly Regex _bahnRegex = new Regex(@"(Bahn) (\d+) (.+?) (\d+:\d+,\d+)");
     
@@ -82,11 +83,17 @@ public class ParserImpl
             {
                 // Matcher laufMatcher = laufPattern.matcher(line);
                 var laufMatcher = _laufRegex.Match(line);
+                var laufShortMatcher = _laufShortRegex.Match(line);
                 var laufMatcherNew = _laufRegexSsm.Match(line);
                 if (laufMatcher.Success)
                 {
                     _lauf = laufMatcher.Groups[1].Value + " " + ToLeadingZeroString(laufMatcher.Groups[2].Value) + 
                             "/" + ToLeadingZeroString(laufMatcher.Groups[3].Value) + " " + laufMatcher.Groups[4].Value;
+                }
+                if (laufShortMatcher.Success)
+                {
+                    _lauf = laufShortMatcher.Groups[1].Value + " " + ToLeadingZeroString(laufShortMatcher.Groups[2].Value) + 
+                            "/" + ToLeadingZeroString(laufShortMatcher.Groups[3].Value);
                 }
                 else if (laufMatcherNew.Success)
                 {

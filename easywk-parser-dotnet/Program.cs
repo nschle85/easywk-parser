@@ -166,6 +166,7 @@ namespace easywk_parser_dotnet
                 DataType = CellValues.String,
                 CellValue = new CellValue("Meldezeit")
             });
+
             sheetDataAll.Append(headerRowAll);
             
             foreach (var starterLine in result)
@@ -215,6 +216,11 @@ namespace easywk_parser_dotnet
                 DataType = CellValues.String,
                 CellValue = new CellValue("Meldezeit")
             });
+            headerRowWettkampf.Append(new Cell()
+            {
+                DataType = CellValues.String,
+                CellValue = new CellValue("Kommentar")
+            });
             sheetDataWettkampf.Append(headerRowWettkampf);
             
             foreach (var starterLine in result)
@@ -246,6 +252,7 @@ namespace easywk_parser_dotnet
             tableColumnsWettkampf.Append(new TableColumn() { Id = (UInt32)4, Name = "Teilnehmer" });
             tableColumnsWettkampf.Append(new TableColumn() { Id = (UInt32)5, Name = "Verein" });
             tableColumnsWettkampf.Append(new TableColumn() { Id = (UInt32)6, Name = "Meldezeit" });
+            tableColumnsWettkampf.Append(new TableColumn() { Id = (UInt32)7, Name = "Kommentar" });
             AddTable(worksheetPartWettkampf,tableColumnsWettkampf,1);
             
             
@@ -291,6 +298,11 @@ namespace easywk_parser_dotnet
                 DataType = CellValues.String,
                 CellValue = new CellValue("Meldezeit")
             });
+            headerRowTeilnehmer.Append(new Cell()
+            {
+                DataType = CellValues.String,
+                CellValue = new CellValue("Kommentar")
+            });
             sheetDataTeilnehmer.Append(headerRowTeilnehmer);
             
             foreach (var starterLine in result)
@@ -320,8 +332,8 @@ namespace easywk_parser_dotnet
             tableColumnsTeilnehmer.Append(new TableColumn() { Id = (UInt32)3, Name = "Bahn" });
             tableColumnsTeilnehmer.Append(new TableColumn() { Id = (UInt32)5, Name = "Verein" });
             tableColumnsTeilnehmer.Append(new TableColumn() { Id = (UInt32)6, Name = "Meldezeit" });
+            tableColumnsTeilnehmer.Append(new TableColumn() { Id = (UInt32)7, Name = "Kommentar" });
             AddTable(worksheetPartTeilnehmer,tableColumnsTeilnehmer, 2);
-            
         }
         
         private static void AddTable(WorksheetPart tableSheetPart, TableColumns tableColumns, int tableNo)
@@ -332,7 +344,7 @@ namespace easywk_parser_dotnet
             Console.WriteLine(tableNo);
 
             // Bereich der Tabelle
-            string reference = "A1:F1269"; // Zellenbereich für die Tabelle
+            string reference = "A1:G2007"; // Zellenbereich für die Tabelle
 
             // Tabelle erstellen
             Table table = new Table() 
@@ -371,55 +383,7 @@ namespace easywk_parser_dotnet
             tableParts.Append(tablePart);
             tableSheetPart.Worksheet.Append(tableParts);
         }
-        private static void AddTeilnehmerTable(WorksheetPart tableSheetPart, TableColumns tableColumns)
-        {
-            // Tabellen-Definition
-            TableDefinitionPart tableDefinitionPart = tableSheetPart.AddNewPart<TableDefinitionPart>();
-            int tableNo = tableSheetPart.TableDefinitionParts.Count() + 2;
-            Console.WriteLine(tableNo);
-
-            // Bereich der Tabelle
-            string reference = "A1:F1269"; // Zellenbereich für die Tabelle
-
-            // Tabelle erstellen
-            Table table = new Table() 
-            { 
-                Id = (UInt32)tableNo, 
-                Name = "Table" + tableNo, 
-                DisplayName = "Table" + tableNo, 
-                Reference = reference, 
-                TotalsRowShown = false 
-            };
-            AutoFilter autoFilter = new AutoFilter() { Reference = reference };
-
-            
-
-            // Tabellenstil definieren
-            TableStyleInfo tableStyleInfo = new TableStyleInfo() 
-            { 
-                Name = "TableStyleLight1", 
-                ShowFirstColumn = false, 
-                ShowLastColumn = false, 
-                ShowRowStripes = true, 
-                ShowColumnStripes = false 
-            };
-
-            table.Append(autoFilter);
-            table.Append(tableColumns);
-            table.Append(tableStyleInfo);
-
-            tableDefinitionPart.Table = table;
-
-            // Tabelle zur Arbeitsblatt hinzufügen
-            TableParts tableParts = new TableParts() { Count = (UInt32)1 };
-            TablePart tablePart = new TablePart()
-            {
-                Id = tableSheetPart.GetIdOfPart(tableDefinitionPart)
-            };
-
-            tableParts.Append(tablePart);
-            tableSheetPart.Worksheet.Append(tableParts);
-        }
+        
     }
     
 }
