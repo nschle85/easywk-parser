@@ -5,6 +5,14 @@ namespace easywk_parser_dotnet;
 
 public static class ExcelExporter
 {
+    private static String ColNameWettkampf="Wettkampf";
+    private static String ColNameLauf="Lauf";
+    private static String ColNameBahn="Bahn";
+    private static String ColNameTeilnehmer="Teilnehmer";
+    private static String ColNameVerein="Verein";
+    private static String ColNameMeldezeit="Meldezeit";
+    private static String ColNameKommentar="Kommentar";
+    
     public static void ExportXLSX(List<StarterLine> result, SpreadsheetDocument doc)
     {
         //GeneralPart
@@ -27,32 +35,32 @@ public static class ExcelExporter
         headerRowAll.Append(new Cell()
         {
             DataType = CellValues.String,
-            CellValue = new CellValue("Wettkampf")
+            CellValue = new CellValue(ColNameWettkampf)
         });
         headerRowAll.Append(new Cell()
         {
             DataType = CellValues.String,
-            CellValue = new CellValue("Lauf")
+            CellValue = new CellValue(ColNameLauf)
         });
         headerRowAll.Append(new Cell()
         {
             DataType = CellValues.String,
-            CellValue = new CellValue("Bahn")
+            CellValue = new CellValue(ColNameBahn)
         });
         headerRowAll.Append(new Cell()
         {
             DataType = CellValues.String,
-            CellValue = new CellValue("Teilnehmer")
+            CellValue = new CellValue(ColNameTeilnehmer)
         });
         headerRowAll.Append(new Cell()
         {
             DataType = CellValues.String,
-            CellValue = new CellValue("Verein")
+            CellValue = new CellValue(ColNameVerein)
         });
         headerRowAll.Append(new Cell()
         {
             DataType = CellValues.String,
-            CellValue = new CellValue("Meldezeit")
+            CellValue = new CellValue(ColNameMeldezeit)
         });
 
         sheetDataAll.Append(headerRowAll);
@@ -77,37 +85,37 @@ public static class ExcelExporter
         headerRowWettkampf.Append(new Cell()
         {
             DataType = CellValues.String,
-            CellValue = new CellValue("Wettkampf")
+            CellValue = new CellValue(ColNameWettkampf)
         });
         headerRowWettkampf.Append(new Cell()
         {
             DataType = CellValues.String,
-            CellValue = new CellValue("Lauf")
+            CellValue = new CellValue(ColNameLauf)
         });
         headerRowWettkampf.Append(new Cell()
         {
             DataType = CellValues.String,
-            CellValue = new CellValue("Bahn")
+            CellValue = new CellValue(ColNameBahn)
         });
         headerRowWettkampf.Append(new Cell()
         {
             DataType = CellValues.String,
-            CellValue = new CellValue("Teilnehmer")
+            CellValue = new CellValue(ColNameTeilnehmer)
         });
         headerRowWettkampf.Append(new Cell()
         {
             DataType = CellValues.String,
-            CellValue = new CellValue("Verein")
+            CellValue = new CellValue(ColNameVerein)
         });
         headerRowWettkampf.Append(new Cell()
         {
             DataType = CellValues.String,
-            CellValue = new CellValue("Meldezeit")
+            CellValue = new CellValue(ColNameMeldezeit)
         });
         headerRowWettkampf.Append(new Cell()
         {
             DataType = CellValues.String,
-            CellValue = new CellValue("Kommentar")
+            CellValue = new CellValue(ColNameKommentar)
         });
         sheetDataWettkampf.Append(headerRowWettkampf);
             
@@ -134,13 +142,13 @@ public static class ExcelExporter
         worksheetPartWettkampf.Worksheet.Append(pageSetupWettkampf);
             
         TableColumns tableColumnsWettkampf = new TableColumns() { Count = 6 };
-        tableColumnsWettkampf.Append(new TableColumn() { Id = (UInt32)1, Name = "Wettkampf" });
-        tableColumnsWettkampf.Append(new TableColumn() { Id = (UInt32)2, Name = "Lauf" });
-        tableColumnsWettkampf.Append(new TableColumn() { Id = (UInt32)3, Name = "Bahn" });
-        tableColumnsWettkampf.Append(new TableColumn() { Id = (UInt32)4, Name = "Teilnehmer" });
-        tableColumnsWettkampf.Append(new TableColumn() { Id = (UInt32)5, Name = "Verein" });
-        tableColumnsWettkampf.Append(new TableColumn() { Id = (UInt32)6, Name = "Meldezeit" });
-        tableColumnsWettkampf.Append(new TableColumn() { Id = (UInt32)7, Name = "Kommentar" });
+        tableColumnsWettkampf.Append(new TableColumn() { Id = (UInt32)1, Name = ColNameWettkampf });
+        tableColumnsWettkampf.Append(new TableColumn() { Id = (UInt32)2, Name = ColNameLauf });
+        tableColumnsWettkampf.Append(new TableColumn() { Id = (UInt32)3, Name = ColNameBahn });
+        tableColumnsWettkampf.Append(new TableColumn() { Id = (UInt32)4, Name = ColNameTeilnehmer });
+        tableColumnsWettkampf.Append(new TableColumn() { Id = (UInt32)5, Name = ColNameVerein });
+        tableColumnsWettkampf.Append(new TableColumn() { Id = (UInt32)6, Name = ColNameMeldezeit });
+        tableColumnsWettkampf.Append(new TableColumn() { Id = (UInt32)7, Name = ColNameKommentar });
         AddTable(worksheetPartWettkampf,tableColumnsWettkampf,1);
             
             
@@ -159,37 +167,37 @@ public static class ExcelExporter
         headerRowTeilnehmer.Append(new Cell()
         {
             DataType = CellValues.String,
-            CellValue = new CellValue("Teilnehmer")
+            CellValue = new CellValue(ColNameTeilnehmer)
         });
         headerRowTeilnehmer.Append(new Cell()
         {
             DataType = CellValues.String,
-            CellValue = new CellValue("Wettkampf")
+            CellValue = new CellValue(ColNameWettkampf)
         });
         headerRowTeilnehmer.Append(new Cell()
         {
             DataType = CellValues.String,
-            CellValue = new CellValue("Lauf")
+            CellValue = new CellValue(ColNameLauf)
         });
         headerRowTeilnehmer.Append(new Cell()
         {
             DataType = CellValues.String,
-            CellValue = new CellValue("Bahn")
+            CellValue = new CellValue(ColNameBahn)
         });
         headerRowTeilnehmer.Append(new Cell()
         {
             DataType = CellValues.String,
-            CellValue = new CellValue("Verein")
+            CellValue = new CellValue(ColNameVerein)
         });
         headerRowTeilnehmer.Append(new Cell()
         {
             DataType = CellValues.String,
-            CellValue = new CellValue("Meldezeit")
+            CellValue = new CellValue(ColNameMeldezeit)
         });
         headerRowTeilnehmer.Append(new Cell()
         {
             DataType = CellValues.String,
-            CellValue = new CellValue("Kommentar")
+            CellValue = new CellValue(ColNameKommentar)
         });
         sheetDataTeilnehmer.Append(headerRowTeilnehmer);
             
@@ -214,13 +222,13 @@ public static class ExcelExporter
             
         // Spalten definieren
         TableColumns tableColumnsTeilnehmer = new TableColumns() { Count = 6 };
-        tableColumnsTeilnehmer.Append(new TableColumn() { Id = (UInt32)4, Name = "Teilnehmer" });
-        tableColumnsTeilnehmer.Append(new TableColumn() { Id = (UInt32)1, Name = "Wettkampf" });
-        tableColumnsTeilnehmer.Append(new TableColumn() { Id = (UInt32)2, Name = "Lauf" });
-        tableColumnsTeilnehmer.Append(new TableColumn() { Id = (UInt32)3, Name = "Bahn" });
-        tableColumnsTeilnehmer.Append(new TableColumn() { Id = (UInt32)5, Name = "Verein" });
-        tableColumnsTeilnehmer.Append(new TableColumn() { Id = (UInt32)6, Name = "Meldezeit" });
-        tableColumnsTeilnehmer.Append(new TableColumn() { Id = (UInt32)7, Name = "Kommentar" });
+        tableColumnsTeilnehmer.Append(new TableColumn() { Id = (UInt32)4, Name = ColNameTeilnehmer });
+        tableColumnsTeilnehmer.Append(new TableColumn() { Id = (UInt32)1, Name = ColNameWettkampf });
+        tableColumnsTeilnehmer.Append(new TableColumn() { Id = (UInt32)2, Name = ColNameLauf });
+        tableColumnsTeilnehmer.Append(new TableColumn() { Id = (UInt32)3, Name = ColNameBahn });
+        tableColumnsTeilnehmer.Append(new TableColumn() { Id = (UInt32)5, Name = ColNameVerein });
+        tableColumnsTeilnehmer.Append(new TableColumn() { Id = (UInt32)6, Name = ColNameMeldezeit });
+        tableColumnsTeilnehmer.Append(new TableColumn() { Id = (UInt32)7, Name = ColNameKommentar });
         AddTable(worksheetPartTeilnehmer,tableColumnsTeilnehmer, 2);
     }
 
