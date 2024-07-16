@@ -230,6 +230,8 @@ public static class ExcelExporter
         tableColumnsTeilnehmer.Append(new TableColumn() { Id = (UInt32)6, Name = ColNameMeldezeit });
         tableColumnsTeilnehmer.Append(new TableColumn() { Id = (UInt32)7, Name = ColNameKommentar });
         AddTable(worksheetPartTeilnehmer,tableColumnsTeilnehmer, 2);
+        
+        doc.Save();
     }
 
     private static void AddTable(WorksheetPart tableSheetPart, TableColumns tableColumns, int tableNo)
@@ -241,7 +243,7 @@ public static class ExcelExporter
 
         // Bereich der Tabelle
         string reference = "A1:G2007"; // Zellenbereich für die Tabelle
-
+        
         // Tabelle erstellen
         Table table = new Table() 
         { 
@@ -252,6 +254,7 @@ public static class ExcelExporter
             TotalsRowShown = false 
         };
         AutoFilter autoFilter = new AutoFilter() { Reference = reference };
+        
 
         // Tabellenstil definieren
         TableStyleInfo tableStyleInfo = new TableStyleInfo() 
@@ -278,5 +281,20 @@ public static class ExcelExporter
 
         tableParts.Append(tablePart);
         tableSheetPart.Worksheet.Append(tableParts);
+        
+        FilterColumn filterColumn4 = new FilterColumn() { ColumnId = (UInt32)4 };
+        Filters filters4 = new Filters();
+        Filter filter4 = new Filter() { Val = "TSV Erding" };
+        filters4.Append(filter4);
+        filterColumn4.Append(filters4);
+        autoFilter.Append(filterColumn4);
+        
+        /*
+        FilterColumn filterColumn5 = new FilterColumn() { ColumnId = (UInt32)5 };
+        Filters filters5 = new Filters();
+        Filter filter5 = new Filter() { Val = "TSV Erding" };
+        filters4.Append(filter5);
+        filterColumn5.Append(filters5);
+        */
     }
 }
