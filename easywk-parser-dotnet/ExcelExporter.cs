@@ -13,6 +13,8 @@ public static class ExcelExporter
     private static String ColNameMeldezeit="Meldezeit";
     private static String ColNameKommentar="Kommentar";
     
+    
+    
     public static void ExportXLSX(List<StarterLine> result, SpreadsheetDocument doc)
     {
         //GeneralPart
@@ -32,37 +34,12 @@ public static class ExcelExporter
         SheetData sheetDataAll = worksheetPartAll.Worksheet.Elements<SheetData>().First();
             
         var headerRowAll = new Row();
-        headerRowAll.Append(new Cell()
-        {
-            DataType = CellValues.String,
-            CellValue = new CellValue(ColNameWettkampf)
-        });
-        headerRowAll.Append(new Cell()
-        {
-            DataType = CellValues.String,
-            CellValue = new CellValue(ColNameLauf)
-        });
-        headerRowAll.Append(new Cell()
-        {
-            DataType = CellValues.String,
-            CellValue = new CellValue(ColNameBahn)
-        });
-        headerRowAll.Append(new Cell()
-        {
-            DataType = CellValues.String,
-            CellValue = new CellValue(ColNameTeilnehmer)
-        });
-        headerRowAll.Append(new Cell()
-        {
-            DataType = CellValues.String,
-            CellValue = new CellValue(ColNameVerein)
-        });
-        headerRowAll.Append(new Cell()
-        {
-            DataType = CellValues.String,
-            CellValue = new CellValue(ColNameMeldezeit)
-        });
-
+        headerRowAll.Append(new Cell() { DataType = CellValues.String, CellValue = new CellValue(ColNameWettkampf) });
+        headerRowAll.Append(new Cell() { DataType = CellValues.String, CellValue = new CellValue(ColNameLauf) });
+        headerRowAll.Append(new Cell() { DataType = CellValues.String, CellValue = new CellValue(ColNameBahn) });
+        headerRowAll.Append(new Cell() { DataType = CellValues.String, CellValue = new CellValue(ColNameTeilnehmer) });
+        headerRowAll.Append(new Cell() { DataType = CellValues.String, CellValue = new CellValue(ColNameVerein) });
+        headerRowAll.Append(new Cell() { DataType = CellValues.String, CellValue = new CellValue(ColNameMeldezeit) });
         sheetDataAll.Append(headerRowAll);
             
         foreach (var starterLine in result)
@@ -82,41 +59,13 @@ public static class ExcelExporter
         SheetData sheetDataWettkampf = worksheetPartWettkampf.Worksheet.Elements<SheetData>().First();
             
         var headerRowWettkampf = new Row();
-        headerRowWettkampf.Append(new Cell()
-        {
-            DataType = CellValues.String,
-            CellValue = new CellValue(ColNameWettkampf)
-        });
-        headerRowWettkampf.Append(new Cell()
-        {
-            DataType = CellValues.String,
-            CellValue = new CellValue(ColNameLauf)
-        });
-        headerRowWettkampf.Append(new Cell()
-        {
-            DataType = CellValues.String,
-            CellValue = new CellValue(ColNameBahn)
-        });
-        headerRowWettkampf.Append(new Cell()
-        {
-            DataType = CellValues.String,
-            CellValue = new CellValue(ColNameTeilnehmer)
-        });
-        headerRowWettkampf.Append(new Cell()
-        {
-            DataType = CellValues.String,
-            CellValue = new CellValue(ColNameVerein)
-        });
-        headerRowWettkampf.Append(new Cell()
-        {
-            DataType = CellValues.String,
-            CellValue = new CellValue(ColNameMeldezeit)
-        });
-        headerRowWettkampf.Append(new Cell()
-        {
-            DataType = CellValues.String,
-            CellValue = new CellValue(ColNameKommentar)
-        });
+        headerRowWettkampf.Append(new Cell() { DataType = CellValues.String, CellValue = new CellValue(ColNameWettkampf) });
+        headerRowWettkampf.Append(new Cell() { DataType = CellValues.String, CellValue = new CellValue(ColNameLauf) });
+        headerRowWettkampf.Append(new Cell() { DataType = CellValues.String, CellValue = new CellValue(ColNameBahn) });
+        headerRowWettkampf.Append(new Cell() { DataType = CellValues.String, CellValue = new CellValue(ColNameTeilnehmer) });
+        headerRowWettkampf.Append(new Cell() { DataType = CellValues.String, CellValue = new CellValue(ColNameVerein) });
+        headerRowWettkampf.Append(new Cell() { DataType = CellValues.String, CellValue = new CellValue(ColNameMeldezeit) });
+        headerRowWettkampf.Append(new Cell() { DataType = CellValues.String, CellValue = new CellValue(ColNameKommentar) });
         sheetDataWettkampf.Append(headerRowWettkampf);
             
         foreach (var starterLine in result)
@@ -131,14 +80,8 @@ public static class ExcelExporter
         worksheetPartWettkampf.Worksheet.SheetProperties.PageSetupProperties.FitToPage = true;
             
         // Set the page orientation to landscape (horizontal)
-        PageSetup pageSetupWettkampf = new PageSetup()
-        {
-            Orientation = OrientationValues.Landscape,
-            PaperSize = 9, //A4 https://learn.microsoft.com/de-de/dotnet/api/documentformat.openxml.spreadsheet.pagesetup?view=openxml-3.0.1
-            FitToWidth = 1,
-            FitToHeight = 0
-                
-        };
+        PageSetup pageSetupWettkampf = GetPageSetup();
+        
         worksheetPartWettkampf.Worksheet.Append(pageSetupWettkampf);
             
         TableColumns tableColumnsWettkampf = new TableColumns() { Count = 6 };
@@ -149,7 +92,7 @@ public static class ExcelExporter
         tableColumnsWettkampf.Append(new TableColumn() { Id = (UInt32)5, Name = ColNameVerein });
         tableColumnsWettkampf.Append(new TableColumn() { Id = (UInt32)6, Name = ColNameMeldezeit });
         tableColumnsWettkampf.Append(new TableColumn() { Id = (UInt32)7, Name = ColNameKommentar });
-        AddTable(worksheetPartWettkampf,tableColumnsWettkampf,1);
+        AddTable(worksheetPartWettkampf,tableColumnsWettkampf,1, GetTsvErdingFilterColumn(4));
             
             
         //Sheet Teilnehmer
@@ -164,43 +107,15 @@ public static class ExcelExporter
         SheetData sheetDataTeilnehmer = worksheetPartTeilnehmer.Worksheet.Elements<SheetData>().First();
             
         var headerRowTeilnehmer = new Row();
-        headerRowTeilnehmer.Append(new Cell()
-        {
-            DataType = CellValues.String,
-            CellValue = new CellValue(ColNameTeilnehmer)
-        });
-        headerRowTeilnehmer.Append(new Cell()
-        {
-            DataType = CellValues.String,
-            CellValue = new CellValue(ColNameWettkampf)
-        });
-        headerRowTeilnehmer.Append(new Cell()
-        {
-            DataType = CellValues.String,
-            CellValue = new CellValue(ColNameLauf)
-        });
-        headerRowTeilnehmer.Append(new Cell()
-        {
-            DataType = CellValues.String,
-            CellValue = new CellValue(ColNameBahn)
-        });
-        headerRowTeilnehmer.Append(new Cell()
-        {
-            DataType = CellValues.String,
-            CellValue = new CellValue(ColNameVerein)
-        });
-        headerRowTeilnehmer.Append(new Cell()
-        {
-            DataType = CellValues.String,
-            CellValue = new CellValue(ColNameMeldezeit)
-        });
-        headerRowTeilnehmer.Append(new Cell()
-        {
-            DataType = CellValues.String,
-            CellValue = new CellValue(ColNameKommentar)
-        });
+        headerRowTeilnehmer.Append(new Cell() { DataType = CellValues.String, CellValue = new CellValue(ColNameTeilnehmer) });
+        headerRowTeilnehmer.Append(new Cell() { DataType = CellValues.String, CellValue = new CellValue(ColNameWettkampf) });
+        headerRowTeilnehmer.Append(new Cell() { DataType = CellValues.String, CellValue = new CellValue(ColNameLauf) });
+        headerRowTeilnehmer.Append(new Cell() { DataType = CellValues.String, CellValue = new CellValue(ColNameBahn) });
+        headerRowTeilnehmer.Append(new Cell() { DataType = CellValues.String, CellValue = new CellValue(ColNameVerein) });
+        headerRowTeilnehmer.Append(new Cell() { DataType = CellValues.String, CellValue = new CellValue(ColNameMeldezeit) });
+        headerRowTeilnehmer.Append(new Cell() { DataType = CellValues.String, CellValue = new CellValue(ColNameKommentar) });
         sheetDataTeilnehmer.Append(headerRowTeilnehmer);
-            
+        
         foreach (var starterLine in result)
         {
             //Console.WriteLine(starterLine.toString());
@@ -210,14 +125,9 @@ public static class ExcelExporter
         SheetProperties spTeilnehmer = new SheetProperties(new PageSetupProperties());
         worksheetPartTeilnehmer.Worksheet.SheetProperties = spTeilnehmer;
         worksheetPartTeilnehmer.Worksheet.SheetProperties.PageSetupProperties.FitToPage = true;
-            
-        PageSetup pageSetupTeilnehmer = new PageSetup()
-        {
-            Orientation = OrientationValues.Landscape,
-            PaperSize = 9, //A4 https://learn.microsoft.com/de-de/dotnet/api/documentformat.openxml.spreadsheet.pagesetup?view=openxml-3.0.1
-            FitToWidth = 1,
-            FitToHeight = 0
-        };
+
+        PageSetup pageSetupTeilnehmer = GetPageSetup();
+        
         worksheetPartTeilnehmer.Worksheet.Append(pageSetupTeilnehmer);
             
         // Spalten definieren
@@ -229,12 +139,34 @@ public static class ExcelExporter
         tableColumnsTeilnehmer.Append(new TableColumn() { Id = (UInt32)5, Name = ColNameVerein });
         tableColumnsTeilnehmer.Append(new TableColumn() { Id = (UInt32)6, Name = ColNameMeldezeit });
         tableColumnsTeilnehmer.Append(new TableColumn() { Id = (UInt32)7, Name = ColNameKommentar });
-        AddTable(worksheetPartTeilnehmer,tableColumnsTeilnehmer, 2);
+        AddTable(worksheetPartTeilnehmer,tableColumnsTeilnehmer, 2, GetTsvErdingFilterColumn(4));
         
         doc.Save();
     }
 
-    private static void AddTable(WorksheetPart tableSheetPart, TableColumns tableColumns, int tableNo)
+    private static PageSetup GetPageSetup()
+    {
+        PageSetup pageSetup = new PageSetup()
+        {
+            Orientation = OrientationValues.Landscape,
+            PaperSize = 9, //A4 https://learn.microsoft.com/de-de/dotnet/api/documentformat.openxml.spreadsheet.pagesetup?view=openxml-3.0.1
+            FitToWidth = 1,
+            FitToHeight = 0
+        };
+        return pageSetup;
+    }
+    
+    private static FilterColumn GetTsvErdingFilterColumn(int id)
+    {
+        FilterColumn filterColumn = new FilterColumn() { ColumnId = (UInt32)id }; // id starts from 0
+        Filters filters = new Filters();
+        Filter filter = new Filter() { Val = "TSV Erding" };
+        filters.Append(filter);
+        filterColumn.Append(filters);
+        return filterColumn;
+    }
+    
+    private static void AddTable(WorksheetPart tableSheetPart, TableColumns tableColumns, int tableNo, FilterColumn tsvErdingFilterColumn)
     {
         // Tabellen-Definition
         TableDefinitionPart tableDefinitionPart = tableSheetPart.AddNewPart<TableDefinitionPart>();
@@ -253,6 +185,7 @@ public static class ExcelExporter
             Reference = reference, 
             TotalsRowShown = false 
         };
+        
         AutoFilter autoFilter = new AutoFilter() { Reference = reference };
         
 
@@ -282,19 +215,7 @@ public static class ExcelExporter
         tableParts.Append(tablePart);
         tableSheetPart.Worksheet.Append(tableParts);
         
-        FilterColumn filterColumn4 = new FilterColumn() { ColumnId = (UInt32)4 };
-        Filters filters4 = new Filters();
-        Filter filter4 = new Filter() { Val = "TSV Erding" };
-        filters4.Append(filter4);
-        filterColumn4.Append(filters4);
-        autoFilter.Append(filterColumn4);
+        autoFilter.Append(tsvErdingFilterColumn);
         
-        /*
-        FilterColumn filterColumn5 = new FilterColumn() { ColumnId = (UInt32)5 };
-        Filters filters5 = new Filters();
-        Filter filter5 = new Filter() { Val = "TSV Erding" };
-        filters4.Append(filter5);
-        filterColumn5.Append(filters5);
-        */
     }
 }
