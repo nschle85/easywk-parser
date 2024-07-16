@@ -166,6 +166,16 @@ public static class ExcelExporter
         return filterColumn;
     }
     
+    private static FilterColumn GetTeilnehmerSortFilterColum(int id)
+    {
+        FilterColumn filterColumn = new FilterColumn() { ColumnId = (UInt32)id }; // id starts from 0
+        Filters filters = new Filters();
+        Filter filter = new Filter() { Val = "TSV Erding" };
+        filters.Append(filter);
+        filterColumn.Append(filters);
+        return filterColumn;
+    }
+    
     private static void AddTable(WorksheetPart tableSheetPart, TableColumns tableColumns, int tableNo, FilterColumn tsvErdingFilterColumn)
     {
         // Tabellen-Definition
@@ -217,5 +227,17 @@ public static class ExcelExporter
         
         autoFilter.Append(tsvErdingFilterColumn);
         
+        
+        // Add sorting information
+        SortState sortState = new SortState() { Reference = reference };
+        SortCondition sortCondition = new SortCondition()
+        {
+            Reference = $"A2:A2007",
+            Descending = false
+        };
+        sortState.Append(sortCondition);
+
+        autoFilter.Append(sortState);
+
     }
 }
