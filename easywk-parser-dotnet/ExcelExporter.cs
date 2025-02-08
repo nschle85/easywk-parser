@@ -18,9 +18,9 @@ public class ExcelExporter
     private static String ColNameKommentar="Kommentar";
 
 
-    public ExcelExporter(string filePath,List<StarterLine> starterLines)
+    public ExcelExporter(string outputFilePath,List<StarterLine> starterLines)
     {
-        this._filePath = filePath;
+        this._filePath = outputFilePath;
         this._starterLines = starterLines;
     }
 

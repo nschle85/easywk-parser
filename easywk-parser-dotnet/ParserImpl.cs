@@ -1,14 +1,10 @@
 using System.Text.RegularExpressions;
-using UglyToad.PdfPig;
-using UglyToad.PdfPig.DocumentLayoutAnalysis;
-using UglyToad.PdfPig.DocumentLayoutAnalysis.PageSegmenter;
-using UglyToad.PdfPig.Util;
 
 namespace easywk_parser_dotnet;
 
 public class ParserImpl
 {
-    private readonly PdfDocument _document;
+    private readonly List<string> _textlines;
     private string _wettkampf = "";
     private string _lauf = "";
     
@@ -30,39 +26,29 @@ public class ParserImpl
 
 
     
-    public ParserImpl(PdfDocument document)
+    public ParserImpl(List<string> textLines)
         {
-            this._document = document;
+            this._textlines = textLines;
         }
 
         public List<StarterLine> Parse()
         {
             List<StarterLine> result = []; 
-            foreach (var page in _document.GetPages())
-            {
-                var pageText = page.Text;
-                var words = DefaultWordExtractor.Instance.GetWords(page.Letters);
-                var blocks = DefaultPageSegmenter.Instance.GetBlocks(words);
-                foreach (var textBlock in blocks)
+            foreach (var textBlockTextLine in _textlines)
+            { 
+                var line = ParseTextLine(textBlockTextLine);
+                if (line!=null)
                 {
-                    foreach (var textBlockTextLine in textBlock.TextLines)
-                    {
-                        var line = ParseTextLine(textBlockTextLine);
-                        if (line!=null)
-                        {
-                            result.Add(line);
-                        }
-                    }
+                    result.Add(line);
                 }
             }
 
             return result;
         }
 
-        private StarterLine? ParseTextLine(TextLine textLine)
+        private StarterLine? ParseTextLine(string line)
         {
             StarterLine? result = null;
-            var line = textLine.Text;
             //Console.WriteLine(line);
             
             if (line.StartsWith("Wettkampf"))

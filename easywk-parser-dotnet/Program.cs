@@ -13,25 +13,12 @@ namespace easywk_parser_dotnet
             Console.WriteLine("Hello, World!");
             //var filePath = @"/Users/nschle85/IdeaProjects/MeldelisteParser/meldeliste.pdf";
             var filePath = args[0];
-            using (PdfDocument document = PdfDocument.Open(filePath))
-            {
-                var parser = new ParserImpl(document);
-                var result = parser.Parse();
-                
-                /*
-                using (StreamWriter outputFile = new StreamWriter(filePath + "-fromdotnet_"+DateTime.Now.ToString("yyyyMMdd-HHmmss")+".csv"))
-                {
-                    ExportCSV(result, outputFile);
-                }
-                
-                using (StreamWriter outputFile = new StreamWriter(filePath + "-fromdotnet_"+DateTime.Now.ToString("yyyyMMdd-HHmmss")+".xls"))
-                {
-                    ExportXLS(result, outputFile);
-                }
-                */
-                var excelExporter = new ExcelExporter(filePath, result);
-                excelExporter.ExportXLSX();
-            }
+            var pdfReader = new MeldeListenPdfReader(filePath);
+            var parsedPDF = pdfReader.GetTextLines();
+            var parserImpl = new ParserImpl(parsedPDF);
+            var starterLines = parserImpl.Parse();
+            var excelExport = new ExcelExporter(filePath, starterLines);
+            excelExport.ExportXLSX();
         }
 
         private static void ExportCSV(List<StarterLine> result, StreamWriter outputFile)
