@@ -1,9 +1,5 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
-using DocumentFormat.OpenXml;
-using DocumentFormat.OpenXml.Drawing.Diagrams;
-using DocumentFormat.OpenXml.Packaging;
-using DocumentFormat.OpenXml.Spreadsheet;
 using UglyToad.PdfPig;
 
 namespace easywk_parser_dotnet
@@ -33,26 +29,8 @@ namespace easywk_parser_dotnet
                     ExportXLS(result, outputFile);
                 }
                 */
-                
-                using (SpreadsheetDocument outputFile = SpreadsheetDocument.Create(filePath + "-fromdotnet_"+DateTime.Now.ToString("yyyyMMdd-HHmmss")+".xlsx", SpreadsheetDocumentType.Workbook))
-                {
-                    ExcelExporter.ExportXLSX(result, outputFile);
-                }
-
-                using (SpreadsheetDocument inputFile =
-                       SpreadsheetDocument.Open(@"/Users/nschle85/IdeaProjects/MeldelisteParser/meldeergebnis_veranstaltungkm24.pdf-fromdotnet_20240628-201918_V01.xlsx", false))
-                {
-                    foreach (var otto in inputFile.WorkbookPart.WorksheetParts)
-                    {
-                        foreach (var tabledef in otto.TableDefinitionParts)
-                        {
-                            foreach (var tableColumn in tabledef.Parts)
-                            {
-                                Console.WriteLine();
-                            }
-                        }
-                    }
-                }
+                var excelExporter = new ExcelExporter(filePath, result);
+                excelExporter.ExportXLSX();
             }
         }
 
@@ -66,7 +44,7 @@ namespace easywk_parser_dotnet
             }
         }
         
-        private static void ExportXLS(List<StarterLine> result, StreamWriter outputFile)
+        private static void ExportHTML(List<StarterLine> result, StreamWriter outputFile)
         { 
             String topPart ="""
                 <html            

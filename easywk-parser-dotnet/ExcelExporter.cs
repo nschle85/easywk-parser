@@ -1,10 +1,14 @@
+using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 
 namespace easywk_parser_dotnet;
 
-public static class ExcelExporter
+public class ExcelExporter
 {
+    
+    private string _filePath;
+    private List<StarterLine> _starterLines;
     private static String ColNameWettkampf="Wettkampf";
     private static String ColNameLauf="Lauf";
     private static String ColNameBahn="Bahn";
@@ -12,10 +16,25 @@ public static class ExcelExporter
     private static String ColNameVerein="Verein";
     private static String ColNameMeldezeit="Meldezeit";
     private static String ColNameKommentar="Kommentar";
-    
-    
-    
-    public static void ExportXLSX(List<StarterLine> result, SpreadsheetDocument doc)
+
+
+    public ExcelExporter(string filePath,List<StarterLine> starterLines)
+    {
+        this._filePath = filePath;
+        this._starterLines = starterLines;
+    }
+
+    public void ExportXLSX()
+    {
+        using (SpreadsheetDocument outputFile = SpreadsheetDocument.Create(
+                   this._filePath + "-fromdotnet_" + DateTime.Now.ToString("yyyyMMdd-HHmmss") + ".xlsx",
+                   SpreadsheetDocumentType.Workbook))
+        {
+            this.ExportXLSXPrivate(this._starterLines, outputFile);
+        }
+    }
+
+    private void ExportXLSXPrivate(List<StarterLine> result, SpreadsheetDocument doc)
     {
         //GeneralPart
         WorkbookPart workbookPart = doc.AddWorkbookPart();
