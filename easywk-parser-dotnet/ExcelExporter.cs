@@ -64,7 +64,7 @@ public class ExcelExporter
         foreach (var starterLine in result)
         {
             //Console.WriteLine(starterLine.toString());
-            sheetDataAll.Append(starterLine.toXLSXRowWettkampf());
+            sheetDataAll.Append(StarterLineExcelFormatter.ToXLSXRowWettkampf(starterLine));
         }
             
         //Sheet Wettkampf
@@ -90,7 +90,7 @@ public class ExcelExporter
         foreach (var starterLine in result)
         {
             //Console.WriteLine(starterLine.toString());
-            sheetDataWettkampf.Append(starterLine.toXLSXRowWettkampf());
+            sheetDataWettkampf.Append(StarterLineExcelFormatter.ToXLSXRowWettkampf(starterLine));
         }
             
             
@@ -138,7 +138,7 @@ public class ExcelExporter
         foreach (var starterLine in result)
         {
             //Console.WriteLine(starterLine.toString());
-            sheetDataTeilnehmer.Append(starterLine.toXLSXRowTeilnehmer());
+            sheetDataTeilnehmer.Append(StarterLineExcelFormatter.ToXLSXRowTeilnehmer(starterLine));
         }
             
         SheetProperties spTeilnehmer = new SheetProperties(new PageSetupProperties());

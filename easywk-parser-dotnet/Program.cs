@@ -1,7 +1,5 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
-using UglyToad.PdfPig;
-
 namespace easywk_parser_dotnet
 {
     class Program
@@ -14,8 +12,8 @@ namespace easywk_parser_dotnet
             //var filePath = @"/Users/nschle85/IdeaProjects/MeldelisteParser/meldeliste.pdf";
             var filePath = args[0];
             var pdfReader = new MeldeListenPdfReader(filePath);
-            var parsedPDF = pdfReader.GetTextLines();
-            var parserImpl = new ParserImpl(parsedPDF);
+            IList<string> parsedPdf = pdfReader.GetTextLines();
+            var parserImpl = new ParserImpl(parsedPdf);
             var starterLines = parserImpl.Parse();
             var excelExport = new ExcelExporter(filePath, starterLines);
             excelExport.ExportXLSX();
@@ -26,8 +24,8 @@ namespace easywk_parser_dotnet
             outputFile.WriteLine("Wettkampf\tLauf\tBahn\tSchwimmer\tVerein\tMeldezeit");
             foreach (var starterLine in result)
             {
-                Console.WriteLine(starterLine.toString());
-                outputFile.WriteLine(starterLine.toString());
+                Console.WriteLine(starterLine.ToString());
+                outputFile.WriteLine(starterLine.ToString());
             }
         }
         
@@ -76,8 +74,8 @@ namespace easywk_parser_dotnet
             outputFile.WriteLine(topPart);
             foreach (var starterLine in result)
             {
-                Console.WriteLine(starterLine.toHtmlRow());
-                outputFile.WriteLine(starterLine.toHtmlRow());
+                Console.WriteLine(StarterLineHtmlFormatter.ToHtmlRow(starterLine));
+                outputFile.WriteLine(StarterLineHtmlFormatter.ToHtmlRow(starterLine));
             }
             outputFile.WriteLine(bottomPart);
         }

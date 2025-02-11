@@ -4,7 +4,7 @@ namespace easywk_parser_dotnet;
 
 public class ParserImpl
 {
-    private readonly List<string> _textlines;
+    private readonly IList<string> _textlines;
     private string _wettkampf = "";
     private string _lauf = "";
     
@@ -26,7 +26,7 @@ public class ParserImpl
 
 
     
-    public ParserImpl(List<string> textLines)
+    public ParserImpl(IList<string> textLines)
         {
             this._textlines = textLines;
         }
@@ -155,7 +155,7 @@ public class ParserImpl
                     
                     var meldezeit = m.Groups[4].Value;
                     
-                    result = new StarterLine(_wettkampf, _lauf, "Bahn "+bahnNr, schwimmerVerein._schwimmer, schwimmerVerein._verein, meldezeit);
+                    result = new StarterLine(_wettkampf, _lauf, "Bahn "+bahnNr, schwimmerVerein.Schwimmer, schwimmerVerein.Verein, meldezeit);
                 }
             }
             else if (_bahnRegexSsm.Match(line).Success)
@@ -197,7 +197,7 @@ public class ParserImpl
                     
                     if (_wettkampf.Length>0 && _lauf.Length >0)
                     {
-                        result = new StarterLine(_wettkampf, _lauf, bahnNr, schwimmerVerein._schwimmer, schwimmerVerein._verein, meldezeit);
+                        result = new StarterLine(_wettkampf, _lauf, bahnNr, schwimmerVerein.Schwimmer, schwimmerVerein.Verein, meldezeit);
                         //Console.WriteLine("Matched new bahn" + line);
                     }
                     
